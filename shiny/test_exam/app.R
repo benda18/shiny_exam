@@ -35,22 +35,30 @@ renv::use(
   xtable      = "xtable@1.8-4"
 )
 
+renv::embed()
+
 library(shiny)
 library(openssl)
 library(renv)
 
-renv::embed()
+
 
 # Define UI for application
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Shiny Exam Example -
-             hash of student's responses"),
   
-  # Questions
+  wellPanel(
+    titlePanel(title = "Shiny Exam Example", 
+               windowTitle = "Building Shiny App of Exam that hashes student's responses"),
+    fluidRow(h3("foo")),  
+  ),
+  
+  
+  # Questions----
   sidebarLayout(
-    sidebarPanel(width = 4, # default = 4
+    sidebarPanel(width = 4,
+                 fluidRow(h3("Questions:")),
                  fluidRow(
                    radioButtons(inputId = "Q1", 
                                 label   = "1) What is the airspeed velocity of an unladen swallow??", 
@@ -93,9 +101,6 @@ ui <- fluidPage(
                                       inline   = FALSE)
                  ),
                  fluidRow(
-                   # for open-ended questions like this take heed: there will be
-                   # many more combinations of correct and incorrect answers
-                   # when you go to check hashes.
                    dateInput(inputId   = "Q6", 
                              label     = "6) On what date was the declaration of independence signed?", 
                              value     = "1776-07-04", 
@@ -107,20 +112,23 @@ ui <- fluidPage(
     ),
     
     # show the hash output
+    # Performance Evaluation----
     mainPanel(width = 8,
-              "md5 Hash Outputs:", 
+              h2("Performance Evaluation by Hash:"), 
               wellPanel(
-                fluidRow(h3("Hash verbatim answers")), 
-                fluidRow(h4("md5(paste(\"A,B,A,July 4, 1776\",..., sep = \",\", collapse = \"\"))")),
-                fluidRow(textOutput("hashTxt"))
+                fluidRow(h3("Approach 1: Hash verbatim answers")), 
+                fluidRow(h4("example formula: md5(paste(\"B,C,B,A,1776-07-04,BC\",..., sep = \",\", collapse = \"\"))")),
+                fluidRow("md5 Hash:", textOutput("hashTxt"))
               ), 
               wellPanel(
-                fluidRow(h3("Check (then hash) if questions were answered correctly")),
-                fluidRow(h4("md5(paste(TRUE,TRUE,FALSE,TRUE,..., sep = \",\", collapse = \"\"))")),
+                fluidRow(h3("Approach 2: Check (then hash) if questions were answered correctly")),
+                fluidRow(h4("example formula\n: md5(paste(TRUE,TRUE,FALSE,TRUE,..., sep = \",\", collapse = \"\"))")),
+                fluidRow("md5 Hash:", textOutput("hashAns"))
               ),
               wellPanel(
-                fluidRow(h3("Count (then hash) the number of correct answers")), 
-                fluidRow(h4("md5(sum(TRUE,TRUE,FALSE,TRUE,...))")))
+                fluidRow(h3("Approach 3: Count (then hash) the number of correct answers")), 
+                fluidRow(h4("example formula: md5(sum(c(TRUE,TRUE,FALSE,TRUE,...)))")), 
+                fluidRow("md5 Hash:", textOutput("hash_nCorrect")))
     )
   )
 )
@@ -130,35 +138,42 @@ server <- function(input, output) {
   
   # hash the answers here (must paste answers together into a single value)
   output$hashTxt <- renderText({
-    hashOfResponses <- md5(paste(input$Q1, 
-                                    input$Q2,
-                                    input$Q3,
-                                    input$Q4,
-                                    input$Q5,
-                                    input$Q6,
-                                    sep = "", collapse = ""))
+    md5(
+      paste(input$Q1, 
+            input$Q2,
+            input$Q3,
+            input$Q4,
+            input$Q5,
+            input$Q6,
+            sep = "", collapse = "")
+    )
   })
   
   output$hashAns <- renderText({
-    hashIfCorrect <- md5(paste(input$Q1, 
-                                  input$Q2,
-                                  input$Q3,
-                                  input$Q4,
-                                  input$Q5,
-                                  input$Q6,
-                                  sep = "", collapse = ""))
+    md5(
+      paste(
+        input$Q1 == "B", 
+        input$Q2 == "C",
+        input$Q3 == "C",
+        input$Q4 == "A",
+        all(input$Q5 == c("B", "C")),
+        input$Q6 == ymd("1776-07-04"),
+        sep = ",", collapse = "")
+    )
   })
   
-  output$hash_nCorr <- renderText({
-    hashNCor <- md5(paste(input$Q1, 
-                             input$Q2,
-                             input$Q3,
-                             input$Q4,
-                             input$Q5,
-                             input$Q6,
-                             sep = "", collapse = ""))
+  output$hash_nCorrect <- renderText({
+    md5(
+      as.character(
+        sum(input$Q1 == "B", 
+            input$Q2 == "C",
+            input$Q3 == "C",
+            input$Q4 == "A",
+            all(input$Q5 == c("B", "C")),
+            input$Q6 == ymd("1776-07-04"))
+      )
+    )
   })
-  
 }
 
 # Run the application 
