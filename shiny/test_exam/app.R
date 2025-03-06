@@ -91,20 +91,20 @@ ui <- fluidPage(
                                       inline   = FALSE)
                  ),
                  fluidRow(
-                   dateInput(inputId = "Q6", 
-                             label = "6) On what date was the declaration of independence signed?", 
-                             value = NULL, 
-                             min     = "1400-01-01", 
-                             max     = Sys.Date(), 
+                   dateInput(inputId   = "Q6", 
+                             label     = "6) On what date was the declaration of independence signed?", 
+                             value     = NULL, 
+                             min       = "1400-01-01", 
+                             max       = Sys.Date(), 
                              startview = "decade", 
-                             format = "MM d, yyyy")
+                             format    = "MM d, yyyy")
                  )
     ),
     
     # show the hash output
     mainPanel(width = 6,
-      "md5 Hash Output:",
-      textOutput("hashTxt")
+              "md5 Hash Output:",
+              textOutput("hashTxt")
     )
   )
 )
