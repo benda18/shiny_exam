@@ -39,6 +39,8 @@ library(shiny)
 library(openssl)
 library(renv)
 
+renv::embed()
+
 # Define UI for application
 ui <- fluidPage(
   
@@ -48,13 +50,13 @@ ui <- fluidPage(
   
   # Questions
   sidebarLayout(
-    sidebarPanel(width = 6, # default = 4
+    sidebarPanel(width = 4, # default = 4
                  fluidRow(
                    radioButtons(inputId = "Q1", 
                                 label   = "1) What is the airspeed velocity of an unladen swallow??", 
                                 choices = list("roughly 24 miles per hour"         = "A",
                                                "an African or a European swallow?" = "B"), 
-                                selected = character(0)) 
+                                selected = "B") 
                  ),
                  fluidRow(
                    radioButtons(inputId = "Q2",
@@ -63,7 +65,7 @@ ui <- fluidPage(
                                                "Not much" = "B",
                                                "So Much"  = "C",
                                                "LOL"      = "D"), 
-                                selected = character(0))
+                                selected = "C")
                  ), 
                  fluidRow(
                    radioButtons(inputId = "Q3",
@@ -71,14 +73,14 @@ ui <- fluidPage(
                                 choices = list("Arms"  = "A",
                                                "Legs"  = "B",
                                                "What?" = "C"), 
-                                selected = character(0))
+                                selected = "C")
                  ),
                  fluidRow(
                    radioButtons(inputId = "Q4",
                                 label   = "4) Is a hotdog in a bun a sandwich?",
                                 choices = list("No"  = "A",
                                                "Yes" = "B"), 
-                                selected = character(0))
+                                selected = "A")
                  ), 
                  fluidRow(
                    checkboxGroupInput(inputId = "Q5", 
@@ -87,14 +89,17 @@ ui <- fluidPage(
                                                      "9"  = "B", 
                                                      "pi" = "C", 
                                                      "42" = "D"), 
-                                      selected = NULL, 
+                                      selected = c("B", "C"), 
                                       inline   = FALSE)
                  ),
                  fluidRow(
+                   # for open-ended questions like this take heed: there will be
+                   # many more combinations of correct and incorrect answers
+                   # when you go to check hashes.
                    dateInput(inputId   = "Q6", 
                              label     = "6) On what date was the declaration of independence signed?", 
-                             value     = NULL, 
-                             min       = "1400-01-01", 
+                             value     = "1776-07-04", 
+                             min       = "1700-01-01", 
                              max       = Sys.Date(), 
                              startview = "decade", 
                              format    = "MM d, yyyy")
@@ -102,9 +107,20 @@ ui <- fluidPage(
     ),
     
     # show the hash output
-    mainPanel(width = 6,
-              "md5 Hash Output:",
-              textOutput("hashTxt")
+    mainPanel(width = 8,
+              "md5 Hash Outputs:", 
+              wellPanel(
+                fluidRow(h3("Hash verbatim answers")), 
+                fluidRow(h4("md5(paste(\"A,B,A,July 4, 1776\",..., sep = \",\", collapse = \"\"))")),
+                fluidRow(textOutput("hashTxt"))
+              ), 
+              wellPanel(
+                fluidRow(h3("Check (then hash) if questions were answered correctly")),
+                fluidRow(h4("md5(paste(TRUE,TRUE,FALSE,TRUE,..., sep = \",\", collapse = \"\"))")),
+              ),
+              wellPanel(
+                fluidRow(h3("Count (then hash) the number of correct answers")), 
+                fluidRow(h4("md5(sum(TRUE,TRUE,FALSE,TRUE,...))")))
     )
   )
 )
@@ -114,7 +130,7 @@ server <- function(input, output) {
   
   # hash the answers here (must paste answers together into a single value)
   output$hashTxt <- renderText({
-    hashOfResponses <- sha256(paste(input$Q1, 
+    hashOfResponses <- md5(paste(input$Q1, 
                                     input$Q2,
                                     input$Q3,
                                     input$Q4,
@@ -122,6 +138,27 @@ server <- function(input, output) {
                                     input$Q6,
                                     sep = "", collapse = ""))
   })
+  
+  output$hashAns <- renderText({
+    hashIfCorrect <- md5(paste(input$Q1, 
+                                  input$Q2,
+                                  input$Q3,
+                                  input$Q4,
+                                  input$Q5,
+                                  input$Q6,
+                                  sep = "", collapse = ""))
+  })
+  
+  output$hash_nCorr <- renderText({
+    hashNCor <- md5(paste(input$Q1, 
+                             input$Q2,
+                             input$Q3,
+                             input$Q4,
+                             input$Q5,
+                             input$Q6,
+                             sep = "", collapse = ""))
+  })
+  
 }
 
 # Run the application 

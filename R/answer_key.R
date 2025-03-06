@@ -1,24 +1,10 @@
 renv::use(
-  askpass    = "askpass@1.2.1",
-  cli        = "cli@3.6.4",
-  dplyr      = "dplyr@1.1.4",
-  fansi      = "fansi@1.0.6",
-  generics   = "generics@0.1.3",
-  glue       = "glue@1.8.0",
-  lifecycle  = "lifecycle@1.0.4",
-  magrittr   = "magrittr@2.0.3",
-  openssl    = "openssl@2.3.2",
-  pillar     = "pillar@1.10.1",
-  pkgconfig  = "pkgconfig@2.0.3",
-  R6         = "R6@2.6.1",
-  renv       = "renv@1.1.1",
-  rlang      = "rlang@1.1.5",
-  sys        = "sys@3.4.3",
-  tibble     = "tibble@3.2.1",
-  tidyselect = "tidyselect@1.2.1",
-  utf8       = "utf8@1.2.4",
-  vctrs      = "vctrs@0.6.5",
-  withr      = "withr@3.0.2"
+  askpass   = "askpass@1.2.1",
+  dplyr     = "dplyr@1.1.4",
+  lubridate = "lubridate@1.9.4",
+  openssl   = "openssl@2.3.2",
+  renv      = "renv@1.1.1",
+  sys       = "sys@3.4.3"
 )
 
 
@@ -29,11 +15,17 @@ library(renv)
 library(openssl)
 library(dplyr)
 library(openssl)
+library(lubridate)
 
 
 correct.answers <- data.frame(q_num = 1:6, 
                               answer = c("B", "D", "B", 
-                                         "A", "D", "C"))
+                                         "A", "D", 
+                                         as.character(ymd("1776-07-04"))))
+
+temp.dates <- as.character(as_date(ymd("1700-01-01"):Sys.Date()))
+
+(length(temp.dates) * 2 * 4 * 3 * 2 * 4)
 
 # get all possible answer combinations
 answer.combinations <- expand.grid(q1 = LETTERS[1:2], 
@@ -41,7 +33,8 @@ answer.combinations <- expand.grid(q1 = LETTERS[1:2],
                                    q3 = LETTERS[1:3], 
                                    q4 = LETTERS[1:2], 
                                    q5 = LETTERS[1:4], 
-                                   q6 = LETTERS[1:4])
+                                   q6 = LETTERS[1:4] # every day bw 1/1/1400 and today
+                                   )
 
 # check each possible answer and see how many are correct
 str_n.correct <- data.frame(n_correct = rep(0,nrow(answer.combinations)))
