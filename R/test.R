@@ -45,3 +45,13 @@ library(shiny)
 
 status()
 snapshot()
+
+
+n <- 3
+x <- 4
+
+4^3
+
+expand.grid(Q1 = 1:4, 
+            Q2 = 1:4, 
+            Q3 = 1:4)
