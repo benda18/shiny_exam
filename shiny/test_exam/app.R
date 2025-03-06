@@ -35,7 +35,7 @@ renv::use(
   xtable      = "xtable@1.8-4"
 )
 
-renv::embed()  
+
 
 # renv package is for version control of libraries used. you do not need
 # anything above this point to run this code but it may be useful in the future
@@ -44,6 +44,7 @@ renv::embed()
 library(shiny)
 library(openssl)
 library(renv)    
+
 
 # Define UI for application
 ui <- fluidPage(
@@ -130,7 +131,11 @@ ui <- fluidPage(
               wellPanel(
                 fluidRow(h3("Approach 3: Count (then hash) the number of correct answers")), 
                 fluidRow(h4("example formula: md5(sum(c(TRUE,TRUE,FALSE,TRUE,...)))")), 
-                fluidRow("md5 Hash:", textOutput("hash_nCorrect")))
+                fluidRow("md5 Hash:", textOutput("hash_nCorrect"))),
+              wellPanel(
+                fluidRow(
+                )
+              )
     )
   )
 )

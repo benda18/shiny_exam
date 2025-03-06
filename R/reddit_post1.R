@@ -1,3 +1,24 @@
+renv::use(
+  askpass      = "askpass@1.2.1",
+  cli          = "cli@3.6.4",
+  colorspace   = "colorspace@2.1-1",
+  farver       = "farver@2.1.2",
+  glue         = "glue@1.8.0",
+  labeling     = "labeling@0.4.3",
+  lifecycle    = "lifecycle@1.0.4",
+  munsell      = "munsell@0.5.1",
+  openssl      = "openssl@2.3.2",
+  R6           = "R6@2.6.1",
+  RColorBrewer = "RColorBrewer@1.1-3",
+  renv         = "renv@1.1.1",
+  rlang        = "rlang@1.1.5",
+  scales       = "scales@1.3.0",
+  sys          = "sys@3.4.3",
+  viridisLite  = "viridisLite@0.4.2"
+)
+
+renv::embed()
+
 # From the code I posted, it's fairly easy to generate a hash for a student's
 # quiz responses (assuming all questions are multiple choice).  However,
 # depending on how you want to grade that exam (pass-fail, every question has
@@ -11,11 +32,16 @@
 #
 #   **PASS-FAIL (@100% correct answers) **
 # the shiny app captures the student's responses in memory, hashes them as a
-# single string, then compares to a hash of the correct answers. You are unable to tell how the student performed not only on any specific question, but how many questions they got correct
+# single string, then compares to a hash of the correct answers. You are unable
+# to tell how the student performed not only on any specific question, but how
+# many questions they got correct
 
 library(renv)
 library(scales)
 library(openssl)
+
+rm(list=ls());cat('\f')
+gc()
 
 student1_hash <- "A,B,C,D" |> md5()
 ## [1] "93f9dc4db1b82845990c5124e8b1c45a"
@@ -37,19 +63,35 @@ all.possible.answers <- expand.grid(q1 = LETTERS[1:4],
                                     q4 = LETTERS[1:4], stringsAsFactors = F)
 as_tibble(all.possible.answers)
 
-all.possible.answers$q1_correct <- all.possible.answers$q1 == student1_ans[1]
-all.possible.answers$q2_correct <- all.possible.answers$q2 == student1_ans[2]
-all.possible.answers$q3_correct <- all.possible.answers$q3 == student1_ans[3]
-all.possible.answers$q4_correct <- all.possible.answers$q4 == student1_ans[4]
+all.possible.answers$q1_correct <- all.possible.answers$q1 == key_ans[1]
+all.possible.answers$q2_correct <- all.possible.answers$q2 == key_ans[2]
+all.possible.answers$q3_correct <- all.possible.answers$q3 == key_ans[3]
+all.possible.answers$q4_correct <- all.possible.answers$q4 == key_ans[4]
 
 all.possible.answers <- all.possible.answers |> 
   mutate(t_correct = q1_correct +q2_correct +q3_correct +q4_correct , 
          pct_correct = t_correct / 4, 
          hash.pct_correct = md5(as.character(pct_correct)))
 
-all.possible.answers %>%
+hash.equal_weight <- all.possible.answers %>%
   group_by(t_correct,  
-           pct_correct,
+           pct_correct = scales::percent(pct_correct),
            hash.pct_correct) %>%
   summarise(n = n()) %>%
-  .[order(.$n,decreasing = F),]
+  .[order(.$t_correct,decreasing = T),]
+
+# get hash of student
+
+
+hash_student.weighted (sum(student1_ans[1] == key_ans[1],
+      student1_ans[2] == key_ans[2],
+      student1_ans[3] == key_ans[3],
+      student1_ans[4] == key_ans[4])/4) |> 
+  as.character() |> 
+  md5()
+
+# **Unequal Weight Answers**
+# the shiny app does everything that the equal-weight approach does, but weights
+# the questions before assigning a percent_correct value to the student's
+# outcome.
+
