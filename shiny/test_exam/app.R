@@ -33,8 +33,39 @@ ui <- fluidPage(
                                                "Not much" = "B",
                                                "So Much"  = "C",
                                                "LOL"      = "D"))
+                 ), 
+                 fluidRow(
+                   radioButtons(inputId = "Q3",
+                                label   = "3) Would you rather have bionic arms or bionic legs?",
+                                choices = list("Arms"  = "A",
+                                               "Legs"  = "B",
+                                               "What?" = "C"))
+                 ),
+                 fluidRow(
+                   radioButtons(inputId = "Q4",
+                                label   = "4) Is a hotdog in a bun a sandwich?",
+                                choices = list("No"  = "A",
+                                               "Yes" = "B"))
+                 ), 
+                 fluidRow(
+                   checkboxGroupInput(inputId = "Q5", 
+                                      label   = "5) Choose all numbers less than 10", 
+                                      choices = list("13" = "A", 
+                                                     "9"  = "B", 
+                                                     "pi" = "C", 
+                                                     "42" = "D"), 
+                                      selected = NULL, 
+                                      inline   = FALSE)
+                 ),
+                 fluidRow(
+                   dateInput(inputId = "Q6", 
+                             label = "6) On what date was the declaration of independence signed?", 
+                             value = NULL, 
+                             min     = "1400-01-01", 
+                             max     = Sys.Date(), 
+                             startview = "decade", 
+                             format = "MM d, yyyy")
                  )
-                 
     ),
     
     # Show a plot of the generated distribution
@@ -42,8 +73,6 @@ ui <- fluidPage(
       #plotOutput("distPlot")
       "Hash Output:",
       textOutput("hashTxt"),
-      
-      
     )
   )
 )
@@ -51,25 +80,24 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  # output$distPlot <- renderPlot({
-  #     # generate bins based on input$bins from ui.R
-  #     # x    <- faithful[, 2]
-  #     # bins <- seq(min(x), max(x), length.out = input$bins + 1)
-  # 
-  #     # # draw the histogram with the specified number of bins
-  #     # hist(x, breaks = bins, col = 'darkgray', border = 'white',
-  #     #      xlab = 'Waiting time to next eruption (in mins)',
-  #     #      main = 'Histogram of waiting times')
-  # })
   
   output$hashTxt <- renderText({
-    hashOfResponses <- openssl::sha256(paste(input$Q1, input$Q2, sep = "", collapse = ""))
+    
+    hashOfResponses <- sha256(paste(input$Q1, 
+                                    input$Q2,
+                                    input$Q3,
+                                    input$Q4,
+                                    input$Q5,
+                                    sep = "", collapse = ""))
+    
+    # this line of code is a joke.  remove it, or retain it at your peril
+    hashOfResponses <- ifelse(test = input$Q4 == "B", 
+                              yes = "A hotdog is not a sandwhich, you FAIL!!!", 
+                              no   = hashOfResponses)
+    
+    
     
   })
-  
-  
-  
-  
 }
 
 # Run the application 
