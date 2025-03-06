@@ -9,22 +9,22 @@ library(shiny)
 library(openssl)
 library(renv)
 
-#renv::embed()
-
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Preposterous Examination"),
+  titlePanel("Shiny Exam Example -
+             hash of student's responses"),
   
-  # Sidebar with a slider input for number of bins 
+  # Questions
   sidebarLayout(
     sidebarPanel(width = 6, # default = 4
                  fluidRow(
                    radioButtons(inputId = "Q1", 
                                 label   = "1) What is the airspeed velocity of an unladen swallow??", 
                                 choices = list("roughly 24 miles per hour"         = "A",
-                                               "an African or a European swallow?" = "B")) 
+                                               "an African or a European swallow?" = "B"), 
+                                selected = character(0)) 
                  ),
                  fluidRow(
                    radioButtons(inputId = "Q2",
@@ -32,20 +32,23 @@ ui <- fluidPage(
                                 choices = list("None"     = "A",
                                                "Not much" = "B",
                                                "So Much"  = "C",
-                                               "LOL"      = "D"))
+                                               "LOL"      = "D"), 
+                                selected = character(0))
                  ), 
                  fluidRow(
                    radioButtons(inputId = "Q3",
                                 label   = "3) Would you rather have bionic arms or bionic legs?",
                                 choices = list("Arms"  = "A",
                                                "Legs"  = "B",
-                                               "What?" = "C"))
+                                               "What?" = "C"), 
+                                selected = character(0))
                  ),
                  fluidRow(
                    radioButtons(inputId = "Q4",
                                 label   = "4) Is a hotdog in a bun a sandwich?",
                                 choices = list("No"  = "A",
-                                               "Yes" = "B"))
+                                               "Yes" = "B"), 
+                                selected = character(0))
                  ), 
                  fluidRow(
                    checkboxGroupInput(inputId = "Q5", 
@@ -68,35 +71,26 @@ ui <- fluidPage(
                  )
     ),
     
-    # Show a plot of the generated distribution
-    mainPanel(
-      #plotOutput("distPlot")
-      "Hash Output:",
-      textOutput("hashTxt"),
+    # show the hash output
+    mainPanel(width = 6,
+      "md5 Hash Output:",
+      textOutput("hashTxt")
     )
   )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic 
 server <- function(input, output) {
   
-  
+  # hash the answers here (must paste answers together into a single value)
   output$hashTxt <- renderText({
-    
     hashOfResponses <- sha256(paste(input$Q1, 
                                     input$Q2,
                                     input$Q3,
                                     input$Q4,
                                     input$Q5,
+                                    input$Q6,
                                     sep = "", collapse = ""))
-    
-    # this line of code is a joke.  remove it, or retain it at your peril
-    hashOfResponses <- ifelse(test = input$Q4 == "B", 
-                              yes = "A hotdog is not a sandwhich, you FAIL!!!", 
-                              no   = hashOfResponses)
-    
-    
-    
   })
 }
 
