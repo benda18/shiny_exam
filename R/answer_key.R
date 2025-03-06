@@ -56,21 +56,21 @@ mcex <- expand.grid(c("", LETTERS[1:4]),
   mutate(ans1 = paste(Var1,Var2,Var3,Var4,Var5, sep = ""))
 
 # cleanup to reorder the response into alphabetical order
-mcex$ans1 <- strsplit(mcex$ans1, "") %>%
-  lapply(., unique) %>%
-  lapply(., sort) %>%
-  lapply(., paste, sep = "", collapse = "") %>%
+mcex$ans1 <- strsplit(mcex$ans1, "") |> 
+  lapply(unique) |> 
+  lapply(sort) |> 
+  lapply(paste, sep = "", collapse = "")  |> 
   unlist()
 
 
 # Approach 1: Hash verbatim answers----
 # get all possible answer combinations
 answer.combinations.ap1 <- expand.grid(q1 = LETTERS[1:2], 
-                                   q2 = LETTERS[1:4], 
-                                   q3 = LETTERS[1:3], 
-                                   q4 = LETTERS[1:2], 
-                                   q5 = unique(mcex$ans1), 
-                                   q6 = temp.dates # all possible date choices (truncated in this example)
+                                       q2 = LETTERS[1:4], 
+                                       q3 = LETTERS[1:3], 
+                                       q4 = LETTERS[1:2], 
+                                       q5 = unique(mcex$ans1), 
+                                       q6 = temp.dates # all possible date choices (truncated in this example)
 )
 
 rm(mcex)
@@ -99,8 +99,9 @@ rm(str_n.correct, i, temp.dates)
 
 # cleanup 
 # remove a column, 
-answer.combinations.ap2 <- (answer.combinations.ap1)[colnames(answer.combinations.ap1) != 
-                                                       c("n_correct", "string", "hash_ap1")] |> 
+answer.combinations.ap2 <- 
+  (answer.combinations.ap1)[colnames(answer.combinations.ap1) != 
+                              c("n_correct", "string", "hash_ap1")] |> 
   as.data.frame()
 
 #factorized columns to character 
@@ -136,9 +137,9 @@ answer.combinations.ap2$which_correct <- paste(answer.combinations.ap2$q1,
 answer.combinations.ap2$hash_ap2 <- md5(answer.combinations.ap2$which_correct)
 
 # Approach 3: Count (then hash) the number of correct answers----
-answer.combinations.ap3 <- answer.combinations.ap2[!colnames(answer.combinations.ap2) %in%
-                                                     c("hash_ap2", 
-                                                       "which_correct")] |> 
+answer.combinations.ap3 <- 
+  answer.combinations.ap2[!colnames(answer.combinations.ap2) %in%
+                            c("hash_ap2", "which_correct")] |> 
   as.data.frame()
 
 answer.combinations.ap3$n_correct <- NA
@@ -161,3 +162,7 @@ answer.combinations.ap3$hash_ap3 <- md5(as.character(answer.combinations.ap3$n_c
 
 rm(i, correct.answers)
 
+
+answer.combinations.ap1
+answer.combinations.ap2
+answer.combinations.ap3

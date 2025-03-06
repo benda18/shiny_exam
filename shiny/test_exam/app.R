@@ -35,13 +35,15 @@ renv::use(
   xtable      = "xtable@1.8-4"
 )
 
-renv::embed()
+renv::embed()  
+
+# renv package is for version control of libraries used. you do not need
+# anything above this point to run this code but it may be useful in the future
+# as libraries evolve and the code breaks.
 
 library(shiny)
 library(openssl)
-library(renv)
-
-
+library(renv)    
 
 # Define UI for application
 ui <- fluidPage(
