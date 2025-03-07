@@ -28,6 +28,7 @@ renv::use(
   R6          = "R6@2.6.1",
   rappdirs    = "rappdirs@0.3.3",
   Rcpp        = "Rcpp@1.0.14",
+  renv        = "renv@1.1.2",
   rlang       = "rlang@1.1.5",
   sass        = "sass@0.4.9",
   shiny       = "shiny@1.10.0",
@@ -65,17 +66,7 @@ ui <- fluidPage(
   # Questions----
   sidebarLayout(
     sidebarPanel(width = 4,
-                 wellPanel(
-                   fluidRow(h3("Available Hashing Functions:")), 
-                   fluidRow(radioButtons(inputId = "hashConfig", 
-                                         label = "Select Hashing Formula", 
-                                         choices = unlist(sort(c("md5", "sha256", "sha512", 
-                                                                 "blake2b", "blake2s", 
-                                                                 "keccak", "md4", "ripemd160",
-                                                                 "sha1", "sha2", "sha224", "sha3", 
-                                                                 "sha384"))))
-                   )
-                 ),
+                 
                  fluidRow(h3("Questions:")),
                  fluidRow(
                    radioButtons(inputId = "Q1", 

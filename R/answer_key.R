@@ -13,6 +13,7 @@ renv::use(
   pillar     = "pillar@1.10.1",
   pkgconfig  = "pkgconfig@2.0.3",
   R6         = "R6@2.6.1",
+  renv       = "renv@1.1.2",
   rlang      = "rlang@1.1.5",
   sys        = "sys@3.4.3",
   tibble     = "tibble@3.2.1",
