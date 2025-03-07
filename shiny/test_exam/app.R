@@ -58,7 +58,7 @@ ui <- fluidPage(
   
   wellPanel(
     titlePanel(title = "Shiny Exam Example", 
-               windowTitle = "Building Shiny App of Exam that hashes student's responses"),
+               windowTitle = "Hashing Exams in Shiny"),
     
   ),
   
