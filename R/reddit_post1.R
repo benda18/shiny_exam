@@ -16,7 +16,6 @@ renv::use(
   pkgconfig    = "pkgconfig@2.0.3",
   R6           = "R6@2.6.1",
   RColorBrewer = "RColorBrewer@1.1-3",
-  renv         = "renv@1.1.1",
   rlang        = "rlang@1.1.5",
   scales       = "scales@1.3.0",
   sys          = "sys@3.4.3",

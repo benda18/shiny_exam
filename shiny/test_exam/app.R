@@ -28,7 +28,6 @@ renv::use(
   R6          = "R6@2.6.1",
   rappdirs    = "rappdirs@0.3.3",
   Rcpp        = "Rcpp@1.0.14",
-  renv        = "renv@1.1.1",
   rlang       = "rlang@1.1.5",
   sass        = "sass@0.4.9",
   shiny       = "shiny@1.10.0",
