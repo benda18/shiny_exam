@@ -2,19 +2,30 @@ renv::use(
   askpass      = "askpass@1.2.1",
   cli          = "cli@3.6.4",
   colorspace   = "colorspace@2.1-1",
+  dplyr        = "dplyr@1.1.4",
+  fansi        = "fansi@1.0.6",
   farver       = "farver@2.1.2",
+  generics     = "generics@0.1.3",
   glue         = "glue@1.8.0",
   labeling     = "labeling@0.4.3",
   lifecycle    = "lifecycle@1.0.4",
+  magrittr     = "magrittr@2.0.3",
   munsell      = "munsell@0.5.1",
   openssl      = "openssl@2.3.2",
+  pillar       = "pillar@1.10.1",
+  pkgconfig    = "pkgconfig@2.0.3",
   R6           = "R6@2.6.1",
   RColorBrewer = "RColorBrewer@1.1-3",
   renv         = "renv@1.1.1",
   rlang        = "rlang@1.1.5",
   scales       = "scales@1.3.0",
   sys          = "sys@3.4.3",
-  viridisLite  = "viridisLite@0.4.2"
+  tibble       = "tibble@3.2.1",
+  tidyselect   = "tidyselect@1.2.1",
+  utf8         = "utf8@1.2.4",
+  vctrs        = "vctrs@0.6.5",
+  viridisLite  = "viridisLite@0.4.2",
+  withr        = "withr@3.0.2"
 )
 
 renv::embed()
@@ -39,6 +50,7 @@ renv::embed()
 library(renv)
 library(scales)
 library(openssl)
+library(dplyr)
 
 rm(list=ls());cat('\f')
 gc()

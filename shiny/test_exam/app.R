@@ -5,11 +5,13 @@ renv::use(
   cachem      = "cachem@1.1.0",
   cli         = "cli@3.6.4",
   commonmark  = "commonmark@1.9.2",
+  cpp11       = "cpp11@0.5.2",
   crayon      = "crayon@1.5.3",
   digest      = "digest@0.6.37",
   fastmap     = "fastmap@1.2.0",
   fontawesome = "fontawesome@0.5.3",
   fs          = "fs@1.6.5",
+  generics    = "generics@0.1.3",
   glue        = "glue@1.8.0",
   htmltools   = "htmltools@0.5.8.1",
   httpuv      = "httpuv@1.6.15",
@@ -17,6 +19,7 @@ renv::use(
   jsonlite    = "jsonlite@1.9.1",
   later       = "later@1.4.1",
   lifecycle   = "lifecycle@1.0.4",
+  lubridate   = "lubridate@1.9.4",
   magrittr    = "magrittr@2.0.3",
   memoise     = "memoise@2.0.1",
   mime        = "mime@0.12",
@@ -31,20 +34,22 @@ renv::use(
   shiny       = "shiny@1.10.0",
   sourcetools = "sourcetools@0.1.7-1",
   sys         = "sys@3.4.3",
+  timechange  = "timechange@0.3.0",
   withr       = "withr@3.0.2",
   xtable      = "xtable@1.8-4"
 )
 
-
+renv::embed()
 
 # renv package is for version control of libraries used. you do not need
 # anything above this point to run this code but it may be useful in the future
 # as libraries evolve and the code breaks.
 
+library(renv)
 library(shiny)
 library(openssl)
-library(renv)    
-
+library(lubridate)
+    
 
 # Define UI for application
 ui <- fluidPage(
@@ -54,13 +59,24 @@ ui <- fluidPage(
   wellPanel(
     titlePanel(title = "Shiny Exam Example", 
                windowTitle = "Building Shiny App of Exam that hashes student's responses"),
-    fluidRow(h3("foo")),  
+    
   ),
   
   
   # Questions----
   sidebarLayout(
     sidebarPanel(width = 4,
+                 wellPanel(
+                   fluidRow(h3("Available Hashing Functions:")), 
+                   fluidRow(radioButtons(inputId = "hashConfig", 
+                                         label = "Select Hashing Formula", 
+                                         choices = unlist(sort(c("md5", "sha256", "sha512", 
+                                                                 "blake2b", "blake2s", 
+                                                                 "keccak", "md4", "ripemd160",
+                                                                 "sha1", "sha2", "sha224", "sha3", 
+                                                                 "sha384"))))
+                   )
+                 ),
                  fluidRow(h3("Questions:")),
                  fluidRow(
                    radioButtons(inputId = "Q1", 
@@ -118,11 +134,12 @@ ui <- fluidPage(
     # Performance Evaluation----
     mainPanel(width = 8,
               h2("Performance Evaluation by Hash:"), 
-              wellPanel(
-                fluidRow(h3("Approach 1: Hash verbatim answers")), 
+             wellPanel(
+                fluidRow(h3("Approach 1: Pass (with 100%)/Fail Evaluation")), 
                 fluidRow(h4("example formula: md5(paste(\"B,C,B,A,1776-07-04,BC\",..., sep = \",\", collapse = \"\"))")),
+                fluidRow(h4("Easiest approach: all questions must be answered correctly for the \"passing\" hash to be returned")),
                 fluidRow("md5 Hash:", textOutput("hashTxt"))
-              ), 
+              ),
               wellPanel(
                 fluidRow(h3("Approach 2: Check (then hash) if questions were answered correctly")),
                 fluidRow(h4("example formula\n: md5(paste(TRUE,TRUE,FALSE,TRUE,..., sep = \",\", collapse = \"\"))")),
@@ -142,6 +159,10 @@ ui <- fluidPage(
 
 # Define server logic 
 server <- function(input, output) {
+  
+  output$hash_used <- renderText({
+    input$hashConfig
+  })
   
   # hash the answers here (must paste answers together into a single value)
   output$hashTxt <- renderText({
